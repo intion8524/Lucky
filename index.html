@@ -14,6 +14,8 @@
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;800&display=swap');
+
         /* ── VARIABLES ── */
         :root {
             --primary:      #003359;   /* น้ำเงินเข้ม — หลัก */
@@ -175,8 +177,17 @@
             font-weight: 900;
             color: var(--primary);
             width: 100%;
+            min-width: 0;
             outline: none;
             font-family: 'Kanit', sans-serif;
+            -moz-appearance: textfield; /* ซ่อนลูกศร Firefox */
+            appearance: textfield;
+        }
+        /* ซ่อนลูกศร input number บน Chrome/Safari */
+        .bill-display input::-webkit-outer-spin-button,
+        .bill-display input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
         textarea.form-control-custom {
             min-height: 180px;
@@ -337,7 +348,14 @@
             align-items: start;
         }
         .form-left { display: flex; flex-direction: column; gap: 10px; }
-        @media (max-width: 680px) { .form-grid { grid-template-columns: 130px 1fr; } }
+        @media (max-width: 680px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .bill-display input { font-size: 1.5rem; }
+        }
+        @media (min-width: 681px) and (max-width: 900px) {
+            .form-grid { grid-template-columns: 130px 1fr; }
+            .bill-display input { font-size: 1.6rem; }
+        }
 
         #contrainer-Login { display: none !important; }
     </style>
@@ -412,7 +430,7 @@
                     <div>
                         <label class="form-label-custom">กรอกตัวเลข</label>
                         <textarea name="AllNumber" class="form-control-custom"
-                           ></textarea>
+                            ></textarea>
                     </div>
 
                 </div>
