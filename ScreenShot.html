@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แสดงผล — เฮง เฮง เฮง</title>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;800&family=Roboto+Mono:wght@400;600;700&display=swap');
+
+        :root {
+            --primary:     #003359;
+            --primary-mid: #005a8e;
+            --primary-light: #e8f2fa;
+            --accent:      #1a6b2a;
+            --gold:        #f39c12;
+            --bg:          #eef2f7;
+            --card:        #ffffff;
+            --border:      #d0dce8;
+            --text:        #1a2a3a;
+            --muted:       #5a7080;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            font-family: 'Kanit', 'Segoe UI', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            background: var(--primary);
+            color: white;
+            padding: 0 16px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,51,89,0.35);
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+        .topbar-brand { font-size: 1rem; font-weight: 800; letter-spacing: 5px; }
+        .topbar-nav { display: flex; align-items: center; gap: 6px; }
+        .topbar-nav a {
+            color: rgba(255,255,255,0.82);
+            text-decoration: none;
+            font-size: 0.82rem;
+            padding: 5px 10px;
+            border-radius: 7px;
+            transition: background 0.15s;
+        }
+        .topbar-nav a:hover, .topbar-nav a.active { background: rgba(255,255,255,0.15); color: white; }
+
+        /* ── PAGE ── */
+        .page { padding: 14px; max-width: 1100px; margin: 0 auto; }
+
+        /* ── CONTROL BAR ── */
+        .control-bar {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 10px rgba(0,51,89,0.1);
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: flex-end;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .ctrl-group { display: flex; flex-direction: column; gap: 4px; }
+        .ctrl-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .ctrl-input, .ctrl-select {
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            font-family: 'Kanit', sans-serif;
+            background: white;
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+        .ctrl-input:focus, .ctrl-select:focus {
+            border-color: var(--primary-mid);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,90,142,0.1);
+        }
+        .ctrl-input { width: 150px; text-align: center; }
+        .ctrl-select { width: 160px; }
+        .btn-load {
+            background: linear-gradient(135deg, var(--primary), var(--primary-mid));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 9px 24px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            box-shadow: 0 3px 10px rgba(0,51,89,0.3);
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        .btn-load:hover { opacity: 0.88; }
+
+        /* ── SECTION CARD ── */
+        .sec-card {
+            background: var(--card);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,51,89,0.08);
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+        }
+        .sec-header {
+            background: var(--primary);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .sec-header .sec-title {
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .sec-header .sec-total {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 3px 14px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .sec-body { padding: 14px; }
+
+        /* ── STAT ROW ── */
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .stat-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--muted);
+            min-width: 140px;
+        }
+        .Display-PoitMoney {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: 1rem;
+            font-family: 'Kanit', sans-serif;
+            width: 140px;
+            text-align: right;
+            font-weight: 700;
+            transition: border-color 0.2s;
+        }
+        .Display-PoitMoney:focus {
+            border-color: var(--primary-mid);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,90,142,0.1);
+        }
+        .LostOfNumber { display: none; }
+
+        /* ยอดรวมใหญ่ใน header */
+        .Display-Number {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: white;
+        }
+        .sec-total-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 4px 14px;
+        }
+        .sec-total-label {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.75);
+            font-weight: 600;
+        }
+
+        /* ยอดเกิน — สีแดง */
+        .over-limit {
+            color: #e74c3c !important;
+            font-weight: 800 !important;
+        }
+        input.ShowNumber_2[style*="display: none"] { display: none !important; }
+        input.ShowNumber_2:not([style*="display: none"]) {
+            background: #e74c3c;
+            color: white;
+            border-radius: 4px;
+            padding: 1px 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border: none;
+            width: auto;
+            min-width: 50px;
+        }
+
+        /* ── TABLE ── */
+        .tbl-wrap { overflow: auto; border-radius: 10px; border: 1px solid var(--border); }
+        .tbl-wrap.max-h { max-height: 480px; }
+        table.dtbl { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        table.dtbl thead th {
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            padding: 10px 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border: none;
+            text-align: center;
+            white-space: nowrap;
+            font-size: 0.88rem;
+            letter-spacing: 0.5px;
+        }
+        table.dtbl thead th.gold { background: var(--gold) !important; color: white; }
+        table.dtbl tbody tr { border-bottom: 1px solid #edf2f7; }
+        table.dtbl tbody tr:hover { background: var(--primary-light); }
+        table.dtbl td {
+            padding: 8px 12px;
+            vertical-align: middle;
+            text-align: right;
+            font-size: 0.92rem;
+        }
+        /* คอลัมน์เลข — ทั้งซ้าย (col1) และขวา (col4) */
+        table.dtbl td:first-child,
+        table.dtbl td:nth-child(4) {
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--primary);
+            letter-spacing: 4px;
+            background: var(--primary-light);
+            padding: 6px 8px;
+        }
+        /* badge ครอบตัวเลขหลัก */
+        table.dtbl td:first-child .num-badge,
+        table.dtbl td:nth-child(4) .num-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            padding: 2px 10px;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 4px;
+            min-width: 44px;
+            text-align: center;
+        }
+        /* ยอดเงินดิบ — น้ำเงินกลาง อ่านง่าย */
+        table.dtbl td .money-val {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--primary-mid);
+        }
+        /* ยอดเกิน — แดง */
+        table.dtbl td .money-over {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #e74c3c;
+            display: block;
+            margin-top: 1px;
+        }
+
+        /* ── CHECK SECTION ── */
+        .check-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        /* ผลลัพธ์ตรวจสอบ 3 ตัว */
+        #TableCHECKINGNUMBER td:first-child {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 2px;
+        }
+        #TableCHECKINGNUMBER td:nth-child(2) {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            color: var(--primary-mid);
+        }
+        #TableCHECKINGNUMBER td:nth-child(3) {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--gold);
+            font-weight: 600;
+        }
+        #TableCHECKINGNUMBER td:nth-child(4) {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 800;
+        }
+        /* ยอดคงเหลือที่เกิน — แดง (JS set inline style อยู่แล้ว) */
+
+        /* ── BILL COUNT GRID ── */
+        .bill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 10px;
+        }
+        .bill-card {
+            background: var(--card);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .bill-card-header {
+            background: var(--primary-mid);
+            color: white;
+            padding: 7px 14px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .bill-card-total {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 1px 8px;
+            font-size: 0.78rem;
+        }
+        .bill-card-body {
+            padding: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        /* PP item — แนวนอน ชื่อ + ตัวเลขในบรรทัดเดียว */
+        PP {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            border: 1px solid var(--border);
+            width: auto !important;
+            height: auto !important;
+        }
+        PP label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+            margin: 0;
+        }
+        PP.bill-zero { display: none !important; }
+        .BillCount {
+            width: 70px;
+            height: 44px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* bill item — แนวนอน ชื่อ + ตัวเลขในบรรทัดเดียว */
+        PP {
+            display: flex !important;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            border: 1px solid var(--border);
+            margin: 3px;
+            width: auto !important;
+            height: auto !important;
+        }
+        PP label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+            margin: 0;
+            min-width: 60px;
+        }
+        PP .BillCount {
+            width: 44px;
+            height: 32px;
+            font-size: 0.95rem;
+            padding: 0;
+        }
+        /* ซ่อน item ที่บิล = 0 */
+        PP.bill-zero {
+            display: none !important;
+        }
+
+        /* ── LOG ── */
+        .log-purple { background: #7b1fa2 !important; }
+
+        /* ── ShowNumber (ใช้โดย JS เดิม) ── */
+        .ShowNumber {
+            width: 70px;
+            text-align: right;
+            border: none;
+            background: transparent;
+            font-size: 0.8rem;
+            font-family: 'Kanit', sans-serif;
+            color: var(--text);
+        }
+        .ShowNumber_2 {
+            width: 55px;
+            border: none;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .B_Number {
+            letter-spacing: 4px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="topbar-brand">เฮง เฮง เฮง</div>
+    <div class="topbar-nav">
+        <a href="index.html">🏠 หน้าหลัก</a>
+        <a href="ScreenShot.html" class="active">📊 แสดงผล</a>
+        <a href="Conclusion.html">📋 สรุปผล</a>
+    </div>
+</div>
+
+<div class="page">
+
+    <!-- ── CONTROL BAR ── -->
+    <div class="control-bar">
+        <div class="ctrl-group">
+            <span class="ctrl-label">📅 วันที่งวด</span>
+            <input type="text" class="ctrl-input" id="datepicker" placeholder="เลือกวันที่" readonly>
+        </div>
+        <div class="ctrl-group">
+            <span class="ctrl-label">🎰 รอบหวย</span>
+            <select class="ctrl-select" id="ddlListHui">
+            </select>
+        </div>
+        <button class="btn-load" id="btnShowData">📊 โหลดข้อมูล</button>
+
+        <!-- hidden elements ที่ JS ต้องการ -->
+        <div hidden>
+            <select id="CustName"></select>
+            <button id="btnAVG"></button>
+        </div>
+    </div>
+
+    <!-- ── เลข 2 ตัว ── -->
+    <div class="sec-card">
+        <div class="sec-header">
+            <span class="sec-title">🔢 เลข 2 ตัว</span>
+            <div class="sec-total-box">
+                <span class="sec-total-label">ยอดรวม</span>
+                <b class="Display-Number" id="DisTotal">0</b>
+                <input id="TotalMoney" class="LostOfNumber" readonly>
+            </div>
+        </div>
+        <div class="sec-body">
+            <div class="stat-row">
+                <span class="stat-label">🎯 ยอดที่ต้องการคัดออก</span>
+                <input class="Display-PoitMoney" id="Display-PoitMoney"
+                    placeholder="กรอกยอด..." value=""
+                    oninput="document.getElementById('PoitMoney').value=this.value; syncCombined();">
+                <input id="PoitMoney" value="0" class="LostOfNumber" readonly>
+                <span style="font-size:0.78rem; color:var(--muted);">← ตัวเลขที่เกินจะขึ้นสีแดง</span>
+            </div>
+            <!-- combined table (1 scrollbar) -->
+            <div class="tbl-wrap max-h" style="margin-top:8px;">
+                <table class="dtbl">
+                    <thead>
+                        <tr>
+                            <th>เลข</th><th>บน</th><th>ล่าง</th>
+                            <th style="background:var(--primary-mid);">คู่</th>
+                            <th style="background:var(--primary-mid);">บน</th>
+                            <th style="background:var(--primary-mid);">ล่าง</th>
+                        </tr>
+                    </thead>
+                    <tbody id="TableTwoNumber_combined"></tbody>
+                </table>
+            </div>
+            <!-- hidden tbodies ที่ JS เดิมต้องการ -->
+            <div hidden>
+                <table><tbody id="TableTwoNumber_1"></tbody></table>
+                <table><tbody id="TableTwoNumber_2"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── เลข 3 ตัว ── -->
+    <div class="sec-card">
+        <div class="sec-header">
+            <span class="sec-title">🔢 เลข 3 ตัว</span>
+            <div class="sec-total-box">
+                <span class="sec-total-label">ยอดรวม</span>
+                <b class="Display-Number" id="DisTotal2">0</b>
+                <input id="TotalMoney2" class="LostOfNumber" readonly>
+            </div>
+        </div>
+        <div class="sec-body">
+            <div class="stat-row">
+                <span class="stat-label">🎯 ยอดที่ต้องการคัดออก</span>
+                <input class="Display-PoitMoney" id="Display-PoitMoney2"
+                    placeholder="กรอกยอด..." value="">
+                <input id="PoitMoney2" value="0" class="LostOfNumber" readonly>
+                <span style="font-size:0.78rem; color:var(--muted);">← ตัวเลขที่เกินจะขึ้นสีแดง</span>
+            </div>
+            <div class="row g-2 mt-1">
+                <div class="col-md-6">
+                    <div class="tbl-wrap max-h">
+                        <table class="dtbl">
+                            <thead><tr>
+                                <th>เลข 3 ตัว</th>
+                                <th>ซื้อ ตรง</th>
+                                <th class="gold">ส่งออก ตรง</th>
+                                <th>ซื้อ โต๊ด</th>
+                                <th class="gold">ส่งออก โต๊ด</th>
+                            </tr></thead>
+                            <tbody id="TableThreeNumber_1"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="tbl-wrap max-h">
+                        <table class="dtbl">
+                            <thead><tr>
+                                <th>เลข 3 ตัว</th>
+                                <th>ซื้อ ตรง</th>
+                                <th class="gold">ส่งออก ตรง</th>
+                                <th>ซื้อ โต๊ด</th>
+                                <th class="gold">ส่งออก โต๊ด</th>
+                            </tr></thead>
+                            <tbody id="TableThreeNumber_2"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tbl-wrap mt-2">
+                <table class="dtbl">
+                    <thead><tr>
+                        <th>#</th><th>เลข 3 ตัว</th>
+                        <th>ยอดซื้อ ตรง</th><th>ยอดซื้อ โต๊ด</th>
+                    </tr></thead>
+                    <tbody id="TableCutTreeNumber"></tbody>
+                </table>
+            </div>
+            <div hidden>
+                <table><tbody id="PR_TableThreeNumber_1"></tbody></table>
+                <table><tbody id="PR_TableThreeNumber_2"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ตรวจสอบเลข 3 ตัว ── -->
+    <div class="sec-card">
+        <div class="sec-header">
+            <span class="sec-title">🔍 ตรวจสอบเลข 3 ตัว</span>
+        </div>
+        <div class="sec-body">
+            <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px;">
+
+                <!-- ตรง -->
+                <div style="background:var(--primary-light); border:1.5px solid var(--border); border-radius:10px; padding:12px 16px; min-width:260px;">
+                    <div style="font-size:0.75rem; font-weight:700; color:var(--primary); letter-spacing:1px; margin-bottom:8px;">
+                        🎯 เลข 3 ตัวตรง
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input id="tbxTopCHECKINGNUMBER" placeholder="กรอกยอดเงิน"
+                            style="border:1.5px solid var(--border); border-radius:8px; padding:7px 12px; font-size:0.9rem; font-family:'Kanit',sans-serif; width:140px;">
+                        <button id="btnTop3Numbers"
+                            style="background:var(--primary); border:none; border-radius:8px; color:white; font-weight:700; padding:8px 14px; cursor:pointer; font-size:0.85rem; font-family:'Kanit',sans-serif; white-space:nowrap;">
+                            ✅ เช็คตรง
+                        </button>
+                    </div>
+                </div>
+
+                <!-- โต๊ด -->
+                <div style="background:#fff8e1; border:1.5px solid #ffe082; border-radius:10px; padding:12px 16px; min-width:260px;">
+                    <div style="font-size:0.75rem; font-weight:700; color:#e65100; letter-spacing:1px; margin-bottom:8px;">
+                        🔄 เลข 3 ตัวโต๊ด
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input id="tbxButCHECKINGNUMBER" placeholder="กรอกยอดเงิน"
+                            style="border:1.5px solid #ffe082; border-radius:8px; padding:7px 12px; font-size:0.9rem; font-family:'Kanit',sans-serif; width:140px;">
+                        <button id="btnBut3Numbers"
+                            style="background:#e65100; border:none; border-radius:8px; color:white; font-weight:700; padding:8px 14px; cursor:pointer; font-size:0.85rem; font-family:'Kanit',sans-serif; white-space:nowrap;">
+                            ✅ เช็คโต๊ด
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tbl-wrap max-h">
+                <table class="dtbl">
+                    <thead><tr>
+                        <th>ตัวเลข</th>
+                        <th>ยอดซื้อ</th>
+                        <th>ยอดส่งออก</th>
+                        <th>ยอดคงเหลือ</th>
+                    </tr></thead>
+                    <tbody id="TableCHECKINGNUMBER"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── เลขวิ่ง ── -->
+    <div class="sec-card">
+        <div class="sec-header">
+            <span class="sec-title">🏃 เลขวิ่ง</span>
+            <div class="sec-total-box">
+                <span class="sec-total-label">ยอดรวม</span>
+                <b class="Display-Number" id="DisTotal3">0</b>
+                <input id="TotalMoney3" class="LostOfNumber" readonly>
+            </div>
+        </div>
+        <div class="sec-body">
+            <div class="tbl-wrap max-h">
+                <table class="dtbl">
+                    <thead><tr>
+                        <th>เลข 1 ตัว</th>
+                        <th>วิ่ง บน</th>
+                        <th>วิ่ง ล่าง</th>
+                    </tr></thead>
+                    <tbody id="TableRunningNumbers"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ตารางนับบิล ── -->
+    <div class="sec-card">
+        <div class="sec-header">
+            <span class="sec-title">📋 ตารางนับบิล</span>
+        </div>
+        <div class="sec-body">
+            <div class="bill-grid" id="billCountGrid">
+                <div class="bill-card">
+                    <div class="bill-card-header">พี่ไก่น้อย</div>
+                    <div class="bill-card-body">
+                        <table class="dtbl"><tbody id="TableCountBill_02"></tbody></table>
+                    </div>
+                </div>
+                <div class="bill-card">
+                    <div class="bill-card-header">พี่แนน</div>
+                    <div class="bill-card-body">
+                        <table class="dtbl"><tbody id="TableCountBill_03"></tbody></table>
+                    </div>
+                </div>
+                <div class="bill-card">
+                    <div class="bill-card-header">พี่เวียง</div>
+                    <div class="bill-card-body">
+                        <table class="dtbl"><tbody id="TableCountBill_05"></tbody></table>
+                    </div>
+                </div>
+                <div class="bill-card">
+                    <div class="bill-card-header">พี่อิ๊ม</div>
+                    <div class="bill-card-body">
+                        <table class="dtbl"><tbody id="TableCountBill_06"></tbody></table>
+                    </div>
+                </div>
+                <div class="bill-card">
+                    <div class="bill-card-header">พี่เยาว์</div>
+                    <div class="bill-card-body">
+                        <table class="dtbl"><tbody id="TableCountBill_08"></tbody></table>
+                    </div>
+                </div>
+            </div>
+            <!-- hidden -->
+            <div hidden>
+                <table><tbody id="TableCountBill"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Log ── -->
+    <div class="sec-card">
+        <div class="sec-header log-purple" style="background:#7b1fa2;">
+            <span class="sec-title">⚠️ ยอดแปลก</span>
+        </div>
+        <div class="sec-body" style="max-height:220px; overflow-y:auto;">
+            <table class="dtbl">
+                <thead><tr><th style="background:#7b1fa2;">รายการ</th></tr></thead>
+                <tbody id="TableLog_01"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="sec-card">
+        <div class="sec-header">
+            <span class="sec-title">📄 Log ข้อมูล</span>
+        </div>
+        <div class="sec-body" style="max-height:220px; overflow-y:auto;">
+            <table class="dtbl">
+                <thead><tr><th>LOG</th></tr></thead>
+                <tbody id="TableLog"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div><!-- end page -->
+
+<script src="ShowDatasJs.js" type="module"></script>
+
+<script>
+// jQuery event bindings สำหรับปุ่มที่ ShowDatasJs.js ใช้ $()
+// ต้องอยู่นอก module เพราะ $ เป็น global
+$(document).ready(function() {
+    // ปุ่มเช็ค 3 ตัวตรง — bind ซ้ำเพื่อให้แน่ใจว่าทำงาน
+    // (ShowDatasJs.js bind ไว้แล้ว แต่ถ้า $ ไม่ทำงานใน module จะ fallback มาที่นี่)
+});
+
+// helper format number
+function formatNum(n) {
+    return n.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
+
+// sync bill count cards — ซ่อน PP ที่ = 0 และแสดงยอดรวมใน header
+window.syncBillCards = function syncBillCards() {
+    document.querySelectorAll(".bill-card").forEach(card => {
+        const pps   = card.querySelectorAll("PP");
+        let total   = 0;
+        pps.forEach(pp => {
+            const inp = pp.querySelector("input.BillCount");
+            if (!inp) return;
+            const v = parseInt(inp.value) || 0;
+            if (v > 0) {
+                pp.classList.remove("bill-zero");
+                total += v;
+            } else {
+                pp.classList.add("bill-zero");
+            }
+        });
+        // อัปเดต total badge ใน header
+        let badge = card.querySelector(".bill-card-total");
+        if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "bill-card-total";
+            card.querySelector(".bill-card-header").appendChild(badge);
+        }
+        badge.textContent = total > 0 ? `รวม ${total} บิล` : "";
+    });
+}
+
+// Sync combined table สำหรับเลข 2 ตัว
+function buildCombinedTable() {
+    const t1 = document.getElementById("TableTwoNumber_1");
+    const t2 = document.getElementById("TableTwoNumber_2");
+    const combined = document.getElementById("TableTwoNumber_combined");
+    if (!t1 || !t2 || !combined) return;
+    if (t1.rows.length === 0) return; // ยังไม่ได้สร้าง
+
+    combined.innerHTML = "";
+    const rows1 = Array.from(t1.rows);
+    const rows2 = Array.from(t2.rows);
+    const maxLen = Math.max(rows1.length, rows2.length);
+
+    for (let i = 0; i < maxLen; i++) {
+        const tr = document.createElement("tr");
+        // 3 cols จาก t1
+        for (let c = 0; c < 3; c++) {
+            const td = document.createElement("td");
+            if (c === 0 && rows1[i]) {
+                // ดึง value ที่ JS set ไว้ (ไม่มี whitespace)
+                const numTxt = rows1[i].cells[0].value || rows1[i].cells[0].textContent.trim();
+                td.innerHTML = numTxt ? `<span class="num-badge">${numTxt}</span>` : "";
+            }
+            tr.appendChild(td);
+        }
+        // 3 cols จาก t2
+        for (let c = 0; c < 3; c++) {
+            const td = document.createElement("td");
+            if (c === 0 && rows2[i]) {
+                const numTxt = rows2[i].cells[0].value || rows2[i].cells[0].textContent.trim();
+                td.innerHTML = numTxt ? `<span class="num-badge">${numTxt}</span>` : "";
+            }
+            tr.appendChild(td);
+        }
+        combined.appendChild(tr);
+    }
+    syncCombined();
+}
+
+window.syncCombined = function syncCombined() {
+    const t1 = document.getElementById("TableTwoNumber_1");
+    const t2 = document.getElementById("TableTwoNumber_2");
+    const combined = document.getElementById("TableTwoNumber_combined");
+    if (!t1 || !t2 || !combined || combined.rows.length === 0) return;
+
+    const rows1 = Array.from(t1.rows);
+    const rows2 = Array.from(t2.rows);
+
+    Array.from(combined.rows).forEach((row, i) => {
+        let rowHasOver = false;
+
+        // ซ้าย (t1)
+        if (rows1[i]) {
+            const cells = rows1[i].cells;
+            const numTxt = cells[0].textContent.trim() || cells[0].value || "";
+            row.cells[0].innerHTML = numTxt ? `<span class="num-badge">${numTxt}</span>` : "";
+
+            const topInp  = cells[1] ? cells[1].querySelector('input.ShowNumber') : null;
+            const topOver = cells[1] ? cells[1].querySelector('input.ShowNumber_2') : null;
+            if (topInp) {
+                const val = topInp.value !== "0" ? topInp.value : "";
+                const isOver = topOver && topOver.style.display !== "none" && topOver.value !== "0";
+                if (isOver) rowHasOver = true;
+                const overAmt = isOver ? Math.abs(parseInt(topOver.value.replace(/,/g,""))) : 0;
+                row.cells[1].innerHTML = val
+                    ? `<span class="money-val">${val}</span>` + (isOver ? `<span class="money-over">เกิน ${formatNum(overAmt)}</span>` : "")
+                    : "";
+            }
+
+            const botInp  = cells[2] ? cells[2].querySelector('input.ShowNumber') : null;
+            const botOver = cells[2] ? cells[2].querySelector('input.ShowNumber_2') : null;
+            if (botInp) {
+                const val = botInp.value !== "0" ? botInp.value : "";
+                const isOver = botOver && botOver.style.display !== "none" && botOver.value !== "0";
+                if (isOver) rowHasOver = true;
+                const overAmt = isOver ? Math.abs(parseInt(botOver.value.replace(/,/g,""))) : 0;
+                row.cells[2].innerHTML = val
+                    ? `<span class="money-val">${val}</span>` + (isOver ? `<span class="money-over">เกิน ${formatNum(overAmt)}</span>` : "")
+                    : "";
+            }
+        }
+
+        // ขวา (t2)
+        if (rows2[i]) {
+            const cells = rows2[i].cells;
+            // ดึงแค่ text ไม่เอา inline style จาก JS เดิม
+            const numTxt2 = cells[0].textContent.trim() || cells[0].value || "";
+            row.cells[3].innerHTML = numTxt2 ? `<span class="num-badge">${numTxt2}</span>` : "";
+
+            const topInp  = cells[1] ? cells[1].querySelector('input.ShowNumber') : null;
+            const topOver = cells[1] ? cells[1].querySelector('input.ShowNumber_2') : null;
+            if (topInp) {
+                const val = topInp.value !== "0" ? topInp.value : "";
+                const isOver = topOver && topOver.style.display !== "none" && topOver.value !== "0";
+                if (isOver) rowHasOver = true;
+                const overAmt = isOver ? Math.abs(parseInt(topOver.value.replace(/,/g,""))) : 0;
+                row.cells[4].innerHTML = val
+                    ? `<span class="money-val">${val}</span>` + (isOver ? `<span class="money-over">เกิน ${formatNum(overAmt)}</span>` : "")
+                    : "";
+            }
+
+            const botInp  = cells[2] ? cells[2].querySelector('input.ShowNumber') : null;
+            const botOver = cells[2] ? cells[2].querySelector('input.ShowNumber_2') : null;
+            if (botInp) {
+                const val = botInp.value !== "0" ? botInp.value : "";
+                const isOver = botOver && botOver.style.display !== "none" && botOver.value !== "0";
+                if (isOver) rowHasOver = true;
+                const overAmt = isOver ? Math.abs(parseInt(botOver.value.replace(/,/g,""))) : 0;
+                row.cells[5].innerHTML = val
+                    ? `<span class="money-val">${val}</span>` + (isOver ? `<span class="money-over">เกิน ${formatNum(overAmt)}</span>` : "")
+                    : "";
+            }
+        }
+
+        // highlight แถวทั้งแถวถ้ามียอดเกิน
+        if (rowHasOver) {
+            row.style.background = "#fff0f0";
+            row.style.borderLeft = "3px solid #e74c3c";
+        } else {
+            row.style.background = "";
+            row.style.borderLeft = "";
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // สร้าง combined table ทันทีหลัง createTableforTwoNumber ทำงาน
+    // ต้องรอ JS module โหลดเสร็จก่อน
+    setTimeout(() => {
+        buildCombinedTable();
+    }, 800);
+
+    document.getElementById("btnShowData").addEventListener("click", () => {
+        // rebuild หลังกดโหลด (ข้อมูลใหม่)
+        setTimeout(buildCombinedTable, 300);
+    });
+
+    // sync PoitMoney2 (3 ตัว) เมื่อพิมพ์
+    const dp2 = document.getElementById("Display-PoitMoney2");
+    if(dp2) dp2.addEventListener("input", () => {
+        document.getElementById("PoitMoney2").value = dp2.value;
+    });
+});
+</script>
+</body>
+</html>

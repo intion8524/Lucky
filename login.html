@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เฮง เฮง เฮง — Login</title>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #c0392b 0%, #8e1a12 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 36px 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .login-logo .title {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: 12px;
+            color: #c0392b;
+            line-height: 1;
+        }
+        .login-logo .subtitle {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 4px;
+            letter-spacing: 2px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1.5px solid #e0e0e0;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #c0392b;
+            box-shadow: 0 0 0 3px rgba(192,57,43,0.12);
+        }
+
+        .divider {
+            border: none;
+            border-top: 1.5px dashed #eee;
+            margin: 20px 0;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 12px;
+            width: 100%;
+            letter-spacing: 2px;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn-login:hover  { opacity: 0.92; }
+        .btn-login:active { transform: scale(0.98); }
+        .btn-login:disabled { opacity: 0.6; }
+
+        .err-box {
+            background: #fff5f5;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            color: #c0392b;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            display: none;
+            margin-top: 12px;
+        }
+
+        /* datepicker override */
+        .ui-datepicker { font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+
+    <div class="login-logo">
+        <div class="title">เฮง เฮง เฮง</div>
+        <div class="subtitle">ระบบบันทึกยอดหวย</div>
+    </div>
+
+    <!-- วันที่ + รอบหวย -->
+    <div class="mb-3">
+        <label class="form-label">📅 วันที่งวด</label>
+        <input type="text" class="form-control" id="datepicker"
+               placeholder="เลือกวันที่" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">🎰 รอบหวย</label>
+        <select class="form-select" id="ddlListHui">
+            <option value="">-- โปรดเลือกรอบหวย --</option>
+            <option value="THI">หวยไทย</option>
+            <option value="AOM">หวยอ้อม</option>
+        </select>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Username / Password -->
+    <div class="mb-3">
+        <label class="form-label">👤 Username</label>
+        <input type="text" class="form-control" id="inputUsername"
+               placeholder="กรอก username" autocomplete="username">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">🔒 Password</label>
+        <input type="password" class="form-control" id="inputPassword"
+               placeholder="กรอก password" autocomplete="current-password">
+    </div>
+
+    <button class="btn-login" id="btnLogin">เข้าสู่ระบบ</button>
+
+    <div class="err-box" id="errMsg"></div>
+
+</div>
+
+<script src="login.js" type="module"></script>
+</body>
+</html>

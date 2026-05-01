@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
+*{
+    font-family: 'Kanit', sans-serif;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+.T-Numbers{
+    width: 50%;
+}
+.LostOfNumber{
+    display: none;
+    /*width: 50% !important; 
+    text-align: right; 
+    border-radius: 5.25rem;
+    font-size: 20px;
+    border: 1px solid #ced4da;*/
+}
+.Display-PoitMoney{
+    width: 50% !important; 
+    text-align: right; 
+    border-radius: 5.25rem;
+    font-size: 20px;
+    border: 1px solid #ced4da;
+
+}
+.B_Number{
+    letter-spacing: 10px;
+    width: 50%!important; 
+    color: blue;
+}
+.Display-Number{
+    width: 50% !important; 
+    text-align: right; 
+}
+
+.input-Winnumber{
+    width: 20% !important; 
+    text-align: right; 
+
+}
+
+.input-Winlotto{
+    width: 90% !important; 
+    text-align: center; 
+    border-radius: 5.25rem;
+    font-size: 40px;
+    height: 70px;
+    letter-spacing: 10px;
+    border-color: #ffc107;
+    background-color: #ffc107;
+    color: white;
+}
+
+.input-money{
+    border-radius: 5.25rem;
+    height: 40px;
+    text-align: center; 
+    letter-spacing: 10px;
+
+}
+th{
+    background-color: #003359 !important;
+    color: white;
+    text-align: center !important;
+}
+
+.BillTxt{
+    /*max-width: 70px !important;*/
+    width: 100px !important;
+    min-height: 50px !important;
+    border: 1px solid rgb(0, 0, 0);
+    padding-left: 5px!important;
+    padding-right: 5px!important;
+    padding-top: 0px!important;
+    padding-bottom: 0px!important;
+    font-size: 15px;
+    height:auto !important;
+    
+}
+
+.WinerText{
+    color: #ff0202b8 !important;
+    font-size: 12px;
+    height: auto;
+}
+
+.Display-TableNumber{
+    width: 100% !important; 
+    text-align: right; 
+}
+
+.ShowNumber{
+    width: 50%;
+    text-align: right; 
+    border: none;
+    background-color: transparent;
+    resize: none;
+    outline: none;
+
+}
+
+.ShowNumber_2{
+    width: 40%;
+    border: none;
+    resize: none;
+    outline: none;
+    background-color: #ff0202b8;
+    color: white;
+    /*display: none;*/
+
+}
+.linkBar{
+    width: 100px !important;
+    color: white;
+
+}
+
+.barnav{
+    background-color: #003359;
+  
+    padding: 10px 10px 10px 10px;
+
+}
+.BillCount{
+
+    width: 60px;
+    height: 50px;
+    text-align: center;
+}
+

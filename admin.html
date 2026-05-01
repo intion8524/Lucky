@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการ User — เฮง เฮง เฮง</title>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;800&display=swap');
+        * { box-sizing: border-box; }
+        body {
+            background: #f0f2f5;
+            font-family: 'Kanit', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            background: #2c3e50;
+            color: white;
+            padding: 0 24px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar .brand { font-size: 1rem; font-weight: 800; letter-spacing: 4px; }
+        .topbar .nav-links { display: flex; align-items: center; gap: 8px; }
+        .topbar .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.82rem;
+            padding: 5px 10px;
+            border-radius: 7px;
+            transition: background 0.15s;
+        }
+        .topbar .nav-links a:hover { background: rgba(255,255,255,0.12); color: white; }
+        .btn-logout {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            border-radius: 8px;
+            padding: 5px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            transition: background 0.15s;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.2); }
+
+        /* LAYOUT */
+        .main-wrap {
+            max-width: 1140px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        /* CARD */
+        .card-box {
+            background: white;
+            border-radius: 14px;
+            padding: 0;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid #e8ecf0;
+        }
+        .card-header-bar {
+            background: #2c3e50;
+            color: white;
+            padding: 12px 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        .card-body-pad { padding: 20px; }
+
+        /* FORM */
+        .form-label { font-weight: 600; font-size: 0.75rem; color: #7f8c8d; margin-bottom: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .form-control, .form-select {
+            border-radius: 9px;
+            border: 1.5px solid #dfe6e9;
+            padding: 9px 13px;
+            font-size: 0.88rem;
+            font-family: 'Kanit', sans-serif;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: none; border-radius: 10px;
+            color: white; font-weight: 700;
+            padding: 10px 24px; font-size: 0.88rem;
+            cursor: pointer; transition: opacity 0.2s;
+            font-family: 'Kanit', sans-serif;
+            box-shadow: 0 2px 8px rgba(39,174,96,0.25);
+        }
+        .btn-save:hover { opacity: 0.88; }
+
+        .btn-cancel {
+            background: #f0f2f5; border: 1px solid #dfe6e9;
+            border-radius: 10px; color: #7f8c8d;
+            font-weight: 600; padding: 10px 18px;
+            font-size: 0.88rem; cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+        }
+        .btn-cancel:hover { background: #e8ecf0; }
+
+        /* TABLE */
+        .table-wrap { max-height: 400px; overflow-y: auto; border-radius: 10px; border: 1px solid #e8ecf0; }
+        .table { margin-bottom: 0; font-size: 0.84rem; }
+        .table thead th {
+            background: #34495e; color: white;
+            font-weight: 600; position: sticky;
+            top: 0; z-index: 1; border: none;
+            padding: 10px 14px; font-size: 0.8rem;
+            letter-spacing: 0.3px; white-space: nowrap;
+        }
+        .table tbody tr { border-bottom: 1px solid #f0f2f5; transition: background 0.1s; }
+        .table tbody tr:hover { background: #f8f9fa; }
+        .table td { vertical-align: middle; padding: 9px 14px; }
+
+        .badge-admin { background: #e74c3c; color: white; border-radius: 6px; padding: 3px 10px; font-size: 0.75rem; font-weight: 700; }
+        .badge-user  { background: #3498db; color: white; border-radius: 6px; padding: 3px 10px; font-size: 0.75rem; font-weight: 700; }
+
+        .btn-sm-edit {
+            background: #f39c12; color: white; border: none; border-radius: 6px;
+            padding: 4px 12px; font-size: 0.75rem; cursor: pointer; font-weight: 600;
+            font-family: 'Kanit', sans-serif; transition: opacity 0.15s;
+        }
+        .btn-sm-edit:hover { opacity: 0.85; }
+        .btn-sm-toggle {
+            border: none; border-radius: 6px; padding: 4px 12px;
+            font-size: 0.75rem; cursor: pointer; color: white; font-weight: 600;
+            font-family: 'Kanit', sans-serif; transition: opacity 0.15s;
+        }
+        .btn-sm-toggle:hover { opacity: 0.85; }
+        .btn-sm-toggle.off { background: #e74c3c; }
+        .btn-sm-toggle.on  { background: #27ae60; }
+
+        /* SELECT USER HIGHLIGHT */
+        .select-user-wrap {
+            background: #f8f9fa; border-radius: 10px;
+            padding: 14px 16px; margin-bottom: 16px;
+            border: 1.5px solid #e8ecf0;
+        }
+
+        /* DELETE SECTION */
+        .delete-section {
+            border-top: 3px solid #e74c3c;
+        }
+        .delete-section .card-header-bar {
+            background: linear-gradient(135deg, #922b21, #c0392b);
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="brand">⚙️ จัดการระบบ</div>
+    <div class="nav-links">
+        <a href="index.html">🏠 หน้าหลัก</a>
+        <a href="ScreenShot.html">📊 แสดงผล</a>
+        <button class="btn-logout" id="btnLogout">ออกจากระบบ</button>
+    </div>
+</div>
+
+<div class="main-wrap">
+<div class="row g-3">
+
+    <!-- ===== คอลัมน์ซ้าย: User ===== -->
+    <div class="col-md-5">
+        <div class="card-box">
+            <div class="card-header-bar">👤 จัดการ User</div>
+            <div class="card-body-pad">
+
+            <!-- ฟอร์ม -->
+            <input type="hidden" id="editUserId">
+            <div class="row g-2 mb-2">
+                <div class="col-6">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" id="inputUUsername" placeholder="username">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="inputUPassword" placeholder="password">
+                </div>
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-8">
+                    <label class="form-label">ชื่อที่แสดง</label>
+                    <input type="text" class="form-control" id="inputUDisplayName" placeholder="เช่น พี่เพ็ค">
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" id="inputURole">
+                        <option value="user">user</option>
+                        <option value="admin">admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mb-4">
+                <button class="btn-save flex-fill" id="btnSaveUser">💾 บันทึก User</button>
+                <button class="btn-cancel" id="btnCancelUser" style="display:none;">ยกเลิก</button>
+            </div>
+
+            <!-- ตาราง -->
+            <div class="table-wrap">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>ชื่อ</th>
+                            <th>Role</th>
+                            <th>สถานะ</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyUsers"></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== คอลัมน์ขวา: ลูกค้า ===== -->
+    <div class="col-md-7">
+        <div class="card-box">
+            <div class="card-header-bar">🧑‍🤝‍🧑 จัดการลูกค้า</div>
+            <div class="card-body-pad">
+
+            <!-- เลือก User -->
+            <div class="select-user-wrap">
+                <label class="form-label">เลือก User ที่ต้องการจัดการลูกค้า</label>
+                <select class="form-select" id="ddlSelectUser">
+                    <option value="">-- เลือก User --</option>
+                </select>
+            </div>
+
+            <!-- ฟอร์มลูกค้า -->
+            <div id="custFormArea" style="display:none;">
+                <input type="hidden" id="editCustId">
+                <div class="row g-2 mb-3">
+                    <div class="col-3">
+                        <label class="form-label">รหัสลูกค้า</label>
+                        <input type="text" class="form-control" id="inputCCode" placeholder="เช่น FERN">
+                    </div>
+                    <div class="col-5">
+                        <label class="form-label">ชื่อลูกค้า</label>
+                        <input type="text" class="form-control" id="inputCName" placeholder="เช่น เฟิร์น">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label">ค่าคอม (%)</label>
+                        <input type="number" class="form-control" id="inputCComm" placeholder="30" value="30" min="0" max="100" step="1">
+                    </div>
+                </div>
+                <div class="d-flex gap-2 mb-4">
+                    <button class="btn-save flex-fill" id="btnSaveCust">💾 บันทึกลูกค้า</button>
+                    <button class="btn-cancel" id="btnCancelCust" style="display:none;">ยกเลิก</button>
+                </div>
+            </div>
+
+            <!-- ตารางลูกค้า -->
+            <div class="table-wrap">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:90px;">รหัส</th>
+                            <th>ชื่อ</th>
+                            <th style="width:60px;">คอม%</th>
+                            <th style="width:60px;">สถานะ</th>
+                            <th style="width:120px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyCustomers"></tbody>
+                </table>
+            </div>
+
+            <div id="custEmpty" class="text-center text-muted py-4" style="display:none;">
+                เลือก User เพื่อดูรายชื่อลูกค้า
+            </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- ===== ลบงวดหวย ===== -->
+<div class="main-wrap" style="margin-top:0;">
+<div class="card-box delete-section">
+    <div class="card-header-bar">🗑️ ลบข้อมูลงวดหวย</div>
+    <div class="card-body-pad">
+
+    <div class="row g-3 align-items-end mb-3">
+        <div class="col-auto">
+            <label class="form-label">📅 วันที่งวด</label>
+            <input type="text" class="form-control" id="deleteDrawDate"
+                placeholder="เช่น 01/04/2567" style="width:160px;">
+        </div>
+        <div class="col-auto">
+            <label class="form-label">🎰 รอบหวย</label>
+            <select class="form-select" id="deleteDrawType" style="width:160px;">
+                <option value="">-- ทุกรอบ --</option>
+                <option value="THI">หวยไทย</option>
+                <option value="AOM">หวยอ้อม</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <label class="form-label">👤 User (ไม่เลือก = ลบทั้งหมด)</label>
+            <select class="form-select" id="deleteDrawUser" style="width:200px;">
+                <option value="">-- ทุก User --</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- preview -->
+    <div id="deletePreview" style="
+        display:none;
+        background:#fff5f5; border:1px solid #f5c6cb;
+        border-radius:10px; padding:12px 16px; margin-bottom:14px;
+        font-size:0.88rem; color:#555;">
+    </div>
+
+    <div class="d-flex gap-2">
+        <button class="btn-save" id="btnPreviewDelete"
+            style="background:#f39c12; box-shadow:none; max-width:180px;">
+            🔍 ดูข้อมูลก่อนลบ
+        </button>
+        <button class="btn-save" id="btnConfirmDelete"
+            style="background:linear-gradient(135deg,#922b21,#c0392b); box-shadow:none; max-width:180px; display:none;">
+            🗑️ ยืนยันลบ
+        </button>
+    </div>
+    </div>
+</div>
+</div>
+
+<script src="admin.js" type="module"></script>
+</body>
+</html>
